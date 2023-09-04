@@ -1,6 +1,12 @@
 # IOPCC-2023
 
-Submission Date: 26-August-2023
+## Obfuscated Python Matchstick Puzzles Generator :fire: (August/2023)
+This project serves as my submission for the IOPCC 2023 competition. 
+It combines my passion for puzzles, coding, and obfuscation, offering a unique and entertaining experience.
+
+The following Python script is a Matchstick Riddles Generator, a playful Python program that creates intriguing 
+matchstick riddles. This project was crafted with a touch of whimsy, drawing inspiration from the "Zen of Python" while 
+celebrating the art of obfuscation.
 
 ```python
 k=__import__;g=k("builtins");q=list;z=int;__=range;p=tuple     ;___=len;mm={ "_" :"""2AT02;T;10
@@ -58,16 +64,25 @@ if __name__ == "__main__":
     print(start())
 ```
 
-## Execution Requirements
-To correctly run the obfuscated Python script, run the script using this amazing command:
+## Usage
+To correctly run the obfuscated Python script, run the script using this amazing command (use Python 3.8+):
 
 ```bash
-python3 nirmo.py
+python3 submission/nirmo.py
 ```
 
-## Operating System and Python version
-The submission is intended to be run on Python 3.8 or later.
+Each time you run it, you get a brand-new matchstick riddle.
+Here's a sneak peek at the kind of puzzles this mysterious script generates:
 
-The script has been tested and is expected to work on the following operating system:
-- OS: macOS (Ventura 13.5)
-- Python: 3.8.8
+```
+move one matchstick to make the equation true
+_          _           _               
+_)   __   | |   _|_   |_|   --    |  | 
+_)        |_|    |     _|   --    |  | 
+                                       
+```
+
+## Files
+ - [/submission](/submission) The actual submission: `nirmo.py` + `remarks.md`.
+ - [/original_code](/original_code) The original code before obfuscation.
+ - [/obfuscation_steps](/obfuscation_steps) All the intermediate obfuscation steps and some utils.
