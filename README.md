@@ -1,7 +1,7 @@
 # IOPCC-2023
 
 ## Obfuscated Python Matchstick Puzzles Generator :fire: (August/2023)
-This project serves as my submission for the IOPCC 2023 competition. 
+This project serves as my submission for the [IOPCC 2023](https://pyobfusc.com/) competition. 
 It combines my passion for puzzles, coding, and obfuscation, offering a unique and entertaining experience.
 
 The following Python script is a Matchstick Riddles Generator, a playful Python program that creates intriguing 
@@ -86,3 +86,9 @@ _)        |_|    |     _|   --    |  |
  - [/submission](/submission) The actual submission: `nirmo.py` + `remarks.md`.
  - [/original_code](/original_code) The original code before obfuscation.
  - [/obfuscation_steps](/obfuscation_steps) All the intermediate obfuscation steps and some utils.
+
+## Inspiration and references
+1. The IOCCC.
+2. python's [art](https://pypi.org/project/art/) module.
+3. [The FIGlet fonts library](http://www.jave.de/figlet/fonts.html), specifically the [mini](http://www.jave.de/figlet/fonts/details/mini.html) font.
+4. This guy who wrote ["The essential matchstick equation toolbox :)"](https://narve.github.io/matchstick-puzzle-solver/).
