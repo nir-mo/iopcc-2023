@@ -1,6 +1,8 @@
-# iopcc-2023
+# IOPCC-2023
 
-```
+Submission Date: 26-August-2023
+
+```python
 k=__import__;g=k("builtins");q=list;z=int;__=range;p=tuple     ;___=len;mm={ "_" :"""2AT02;T;10
 CA01CB01CCBD1B0CCC31CE1ACF2ÉCM2FACPU19DD2F01CF2MCÉ2ÉCUBG1      0CF2ÉCZ2FAEPÀ11DG2F01CF2ZCÉ2ÉCÀ1
 02DCE1001CF2ÉCÃ2FACPT2F2DCH2F3B2GABPV2E3HCE2YCÉ2ÉCV2E0HCE      2ÉCY2F01CF2ÃCÉ2ÉCTBH2C31CI1ICI2D
@@ -55,3 +57,17 @@ in __(5)).split(bytes(1), bool(...))[z(....__ne__(...))].decode() for v in  [  8
 if __name__ == "__main__":
     print(start())
 ```
+
+## Execution Requirements
+To correctly run the obfuscated Python script, run the script using this amazing command:
+
+```bash
+python3 nirmo.py
+```
+
+## Operating System and Python version
+The submission is intended to be run on Python 3.8 or later.
+
+The script has been tested and is expected to work on the following operating system:
+- OS: macOS (Ventura 13.5)
+- Python: 3.8.8
