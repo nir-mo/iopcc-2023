@@ -1,0 +1,677 @@
+# Nirmo's VM
+
+from this import d
+
+"""
+TODOS
+===========================
+TODO: 1) DONE! Calculate the Constants 0, 1, 2 dynamically.
+TODO: 2) DONE! Strip!, Try to reuse variables and labels by detecting dead usages!
+TODO: 3) DONE! Make every instruction to be a single char.
+TODO: 4) read two chars each time, no more new lines, ignore spaces and new lines.
+TODO: 5) Obfuscate the dict!
+TODO: 6) get rid of the initial printing!
+TODO: 7) Obfuscate the entire program.
+"""
+
+docs = """
+    - rand max_value ; Generate a random number between 0 and max_value and store it in `result`
+    - ADD value      ; Add the specified value to `result`: `result = result + value`
+    - SUB value      ; Subtract the specified value from `result`: `result = result - value`
+    - push arr_name  ; push result into arr_name: arr_name.append(result)
+    - cmp value      ; cmp value with result, if equals then result = 1 otherwise result = 0. 
+    - jt label_name  ; jump to label_name if result is 1.
+    - read var_name  ; read var_name into result.
+    - set
+    - arr  new array
+"""
+
+generate_equation_program = """
+    rand 0
+    set move
+    add 1
+    set add
+    add 1
+    set remove
+    arr components
+    rand add                           ; result = random.randint(0, 1)   
+    add remove                            ; result = result + 2 -> result = random.randint(2, 3) 
+    set number_of_components         ; number_of_components = random.randint(2, 3) 
+
+    sub 1                            ; result = result - 1
+    set number_of_operators          ; number_of_operators = number_of_components - 1
+
+    rand move                           ; result = 0
+    set I                            ; i = 0
+    label init_components
+    read I                          ; result = i
+    cmp number_of_components        ; result = int(i == number_of_components)
+    jt init_components_end
+
+    rand 9
+    push components                 ; components.append(random.randint(0, 9))
+
+    read I                          ; result = i
+    add 1                           ; result += 1
+    set I                           ; i = i = 1
+    jump init_components
+    label init_components_end
+
+    ;;;;;;;;;;;;;;;;;;;;;;; Init operators ;;;;;;;;;;;;;;;;;;;;;;;;
+
+    arr operators
+    rand 0                           ; result = 0
+    set I                            ; i = 0
+    label init_operators
+    read I                          ; result = i
+    cmp number_of_operators         ; result = int(i == number_of_operators)
+    jt init_operators_end
+
+    rand 1
+    push operators                  ; operators.append(random.randint(0, 1))
+
+    read I                          ; result = i
+    add 1                           ; result += 1
+    set I                           ; i = i = 1
+    jump init_operators
+    label init_operators_end
+
+    ;;;;;;;;;;;;;;;;;;;;;;; Calculate equation result ;;;;;;;;;;;;;;;;;;;;;;;;
+
+    rand 0
+    read components                 ; result = components[0]
+    set equation_result             ; equation_result = components[0]
+
+    rand 0
+    add 1
+    set I                           ; i = 1
+
+    label eq_result_loop_start
+    read I
+    cmp number_of_components
+    jt eq_result_loop_end
+
+    read I
+    read components
+    set component_i             ; component_i = component[i]
+
+    read I
+    sub add
+    read operators              ; result = operators[i - 1]
+    cmp add                    ; if (operators[i - 1] != +): 
+    jt plus_label
+
+    ; Perform minus calculation    
+    read equation_result
+    sub component_i              
+    set equation_result         ;       equation_result = equation_result - component[i]
+    jump eq_result_loop_inc
+    label plus_label                  ; else:
+
+    ; Perform plus calculation    
+    read equation_result
+    add component_i              
+    set equation_result         ;       equation_result = equation_result + component[i]
+
+    label eq_result_loop_inc
+    read I
+    add 1
+    set I
+    jump eq_result_loop_start
+    label eq_result_loop_end
+
+    ;;;;;;;;;;;;;;;;;;;;;;; Annotate equation ;;;;;;;;;;;;;;;;;;;;;;;;
+    arr new_equation
+    read number_of_components
+    sub 1
+    set number_of_components_len
+    rand number_of_components_len
+    set component_to_change_index
+    read components             
+    set component_to_change      ; component_to_change = components[rand(0, number_of_components)]
+    read transitions            
+    set possible_transitions     ; possible_transitions = transitions[component_to_change]
+    read component_to_change
+    read lengths
+    set possible_transitions_len ; possible_transitions_len = lengths[component_to_change]
+
+    rand possible_transitions_len
+    sub 1
+    read possible_transitions
+    set transition              ; transition = possible_transitions[rand(0, possible_transitions_len - 1)]
+
+    rand 0
+    set I
+    label start_build_new_equation_loop
+    read I
+    cmp number_of_components
+    jt end_build_new_equation_loop
+
+    read I
+    cmp component_to_change_index
+    jt replace_element
+    read I
+    read components
+    push new_equation           ; new_equation.append(components[i])
+    jump inc_build_new_equation_loop  
+
+    label replace_element
+    rand 0
+    add 1
+    read transition
+    push new_equation           ; new_equation.append(transition[1])
+
+    label inc_build_new_equation_loop
+    read I
+    add 1
+    set I                      ; i = i + 1
+    jump start_build_new_equation_loop
+    label end_build_new_equation_loop
+
+    ;;;;;;;;;;;;;;;;;;;;;;; Build instructions for the user (the player) ;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;; Should build the string:
+    ;;;  {Move/Add/Remove} one matchstick to make the equation true")
+    arr msg
+    rand 0
+    read transition
+    set transition_type
+    cmp move
+    jt write_move
+    read transition_type
+    cmp add
+    jt write_add
+    read n
+    push msg
+    read q
+    push msg
+    read q
+    push msg
+    jump write_rest
+
+    label write_add
+        ;; write remove
+    read e
+    push msg
+    read r
+    push msg
+    read z
+    push msg
+    read b
+    push msg
+    read i
+    push msg
+    read r
+    push msg
+    jump write_rest
+
+    label write_move
+        read z
+    push msg
+    read b
+    push msg
+    read i
+    push msg
+    read r
+    push msg
+
+    label write_rest
+    read space
+    push msg
+    read b
+    push msg
+    read a
+    push msg
+    read r
+    push msg
+    read space
+
+    push msg
+    read z
+    push msg
+    read n 
+    push msg
+    read g
+    push msg
+    read p
+    push msg
+    read u
+    push msg
+    read f
+    push msg
+    read g
+    push msg
+    read v
+    push msg
+    read p
+    push msg
+    read x
+    push msg
+    read space
+
+    push msg
+    read g
+    push msg
+    read b
+    push msg
+     read space
+
+     push msg
+     read z
+     push msg
+     read n
+     push msg
+     read x
+     push msg
+     read r
+     push msg
+      read space
+
+      push msg
+      read g
+      push msg
+      read u
+      push msg
+      read r
+      push msg
+      read space
+      push msg
+
+       read r
+       push msg
+       read d
+       push msg
+       read h
+       push msg
+       read n
+       push msg
+       read g
+       push msg
+       read v
+       push msg
+       read b
+       push msg
+       read a
+       push msg
+        read space
+
+        push msg 
+        read g
+        push msg
+        read e
+        push msg
+        read h
+        push msg
+        read r
+        push msg
+
+    ;;;;;;;;;;;;;;;;;;;;;;; Build an equation string ;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; The equation is an array of strings and integers:
+    ;;;;;
+    arr new_equation_str
+    rand 0
+    read new_equation
+    push new_equation_str ; new_equation_str.append(new_equation[0])
+
+    rand 0
+    add 1
+    set I
+    label start_new_equation_str
+    read I
+    cmp number_of_components
+    jt end_new_equation_str
+
+    read space
+    push new_equation_str
+
+    read I
+    sub 1
+    read operators
+    cmp add
+    jt add_plus
+    read minus_str
+    push new_equation_str       ; new_equation_str.append('+' if operators[i - 1] else '-')
+    jump continue_new_equation_str
+    
+    label add_plus
+    read plus_str
+    push new_equation_str       ; new_equation_str.append('+' if operators[i - 1] else '-')
+
+    label continue_new_equation_str
+    read space
+    push new_equation_str
+
+    read I
+    read new_equation
+    push new_equation_str       ; new_equation_str.append(new_equation[i])
+
+    read I
+    add 1
+    set I
+    jump start_new_equation_str
+    label end_new_equation_str
+
+    read space
+    push new_equation_str
+    read assign
+    push new_equation_str   ; new_equation_str.append('=')
+    read space
+    push new_equation_str
+    read equation_result
+    push new_equation_str   ; new_equation_str.append(equation_result)
+
+    ;;;;;;;;;;;;;;;;;;;;;;; print everything ;;;;;;;;;;;;;;;;;;;;;;;;
+    print msg
+    mini_print new_equation_str
+"""
+
+import random
+
+mini_dic = {
+    ' ': ['  ', '  ', '  ', '  ', ''],
+    '0': [' _  ', '/ \\ ', '\\_/ ', '    ', ''],
+    '4': ['     ', '|_|  ', '  |  ', '     ', ''],
+    '8': [' _  ', '(_) ', '(_) ', '    ', ''],
+    '+': ['    ', '_|_ ', ' |  ', '    ', ''],
+    '3': ['_  ', '_) ', '_) ', '   ', ''],
+    '7': ['__ ', '  |', '  |', '   ', ''],
+    '2': ['_  ', ' ) ', '/_ ', '   ', ''],
+    '6': [' _  ', '|_  ', '|_) ', '    ', ''],
+    '-': ['   ', '__ ', '   ', '   ', ''],
+    '1': ['   ', ' | ', ' | ', '   ', ''],
+    '5': [' _  ', '|_  ', ' _| ', '    ', ''],
+    '9': [' _  ', '|_| ', ' _| ', '    ', ''],
+    '=': ['   ', '-- ', '-- ', '   ', '']
+}
+
+
+class CustomLanguageInterpreter:
+    def __init__(self):
+        self.variables = {
+            "space": " ",
+            "minus_str": "-",
+            "plus_str": "+",
+            "assign": "=",
+            "transitions": [
+                [(1, 8)],
+                [(1, 7)],
+                [(0, 3), (1, 7)],
+                [(0, 5), (0, 2), (1, 9)],
+                [(1, 9)],
+                [(1, 9), (1, 6), (0, 3)],
+                [(0, 9), (1, 8), (2, 5)],
+                [(2, 1)],
+                [(2, 0), (2, 6), (2, 9)],
+                [(0, 6), (1, 8), (2, 3), (2, 4), (2, 5)],
+            ],
+            "pc": 0,
+        }
+
+    def scan_labels(self, program):
+        lines = program.split('\n')
+        for idx, line in enumerate(lines):
+            line = line.strip()
+            if line and line.startswith('read pc'):
+                label_name = lines[idx + 1].strip().split()[1]
+                self.variables[label_name] = idx
+
+    def interpret(self, program):
+        self.variables.update(d)
+        self.variables["lengths"] = [len(i) for i in self.variables["transitions"]]
+        self.scan_labels(program)
+        lines = program.split('\n')
+        while self.variables["pc"] < len(lines):
+            line = lines[self.variables["pc"]].strip()
+            comment = line.find(";")
+            if comment != -1:
+                line = line[:line.find(";")]
+                line = line.strip()
+
+            if line:
+                tokens = line.split()
+                command = tokens[0]
+                args = tokens[1:]
+                if command == 'rand':
+                    if args[0] in self.variables:
+                        self.variables["result"] = random.randint(0, int(self.variables[args[0]]))
+                    else:
+                        self.variables["result"] = random.randint(0, int(args[0]))
+                elif command == 'add':
+                    if args[0] in self.variables:
+                        self.variables["result"] += int(self.variables[args[0]])
+                    else:
+                        self.variables["result"] += int(args[0])
+                elif command == 'sub':
+                    if args[0] in self.variables:
+                        self.variables["result"] -= int(self.variables[args[0]])
+                    else:
+                        self.variables["result"] -= int(args[0])
+                elif command == 'push':
+                    self.variables[args[0]].append(self.variables["result"])
+                elif command == 'cmp':
+                    self.variables["result"] = int(self.variables["result"] == self.variables[args[0]])
+                elif command == 'jt':
+                    if self.variables["result"]:
+                        self.variables["pc"] = self.variables[args[0]]
+                        continue
+                elif command == 'read':
+                    v = self.variables[args[0]]
+                    if isinstance(v, list) or isinstance(v, tuple):
+                        self.variables["result"] = v[self.variables["result"]]
+                    else:
+                        self.variables["result"] = v
+                elif command == 'set':
+                    self.variables[args[0]] = self.variables["result"]
+                elif command == "arr":
+                    self.variables[args[0]] = list()
+                elif command == 'print':
+                    print("".join(self.variables[args[0]]))
+                elif command == 'mini_print':
+                    print("\n".join(
+                        "".join(mini_dic[x][i] for x in [c for e in self.variables[args[0]] for c in [*str(e)]]) for i
+                        in range(5)))
+
+            self.variables["pc"] += 1
+
+
+def get_program_lines(program):
+    lines = program.split("\n")
+    for line in lines:
+        line = line.strip()
+        comment = line.find(";")
+        if comment != -1:
+            line = line[:line.find(";")]
+            line = line.strip()
+
+        if line:
+            tokens = line.split()
+            command = tokens[0]
+            args = tokens[1:]
+            yield line, command, args
+
+
+def get_labels(program):
+    labels = set()
+    lines = program.split('\n')
+    for idx, line in enumerate(lines):
+        line = line.strip()
+        if line and line.startswith('read pc'):
+            label_name = lines[idx + 1].strip().split()[1]
+            labels.add(label_name)
+
+    return labels
+
+def remove_jumps(program):
+    """
+    :param program:
+    :return: New program without jump instructions!
+        every jump instruction can be replaced with:
+            read label_name
+            set pc
+    """
+    output = ""
+    for line, command, args in get_program_lines(program):
+        if command == "jump":
+            output += f"read {args[0]}\n"
+            output += "set pc\n"
+        else:
+            output += f"{line}\n"
+
+    return output
+
+
+def remove_labels(program):
+    """
+
+    :param program:
+    :return: Program without label instruction. every "label" can be replaced with:
+        read pc
+        set label_name.
+
+        The thing is, that detecting the labels prior to the program execution requires changes in the interpreter.
+    """
+    output = ""
+    for line, command, args in get_program_lines(program):
+        if command == "label":
+            output += f"read pc\n"
+            output += f"set {args[0]}\n"
+        else:
+            output += f"{line}\n"
+
+    return output
+
+
+class VarsGenerator:
+    SYMBOLS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕ'
+
+    def __init__(self):
+        self.cur = 0
+
+    def get_next(self):
+        cur = VarsGenerator.SYMBOLS[self.cur]
+        self.cur += 1
+        return cur
+
+
+vars_generator = VarsGenerator()
+
+def reduce_vars(program):
+    """
+
+    :param program:
+    :return: Program without label instruction. every "label" can be replaced with:
+        read pc
+        set label_name.
+
+        The thing is, that detecting the labels prior to the program execution requires changes in the interpreter.
+    """
+
+    labels = get_labels(program)
+
+    vars = {}
+    for idx, (line, command, args) in enumerate(get_program_lines(program)):
+        if (command in {"rand", "add", "sub", "read", "cmp", "push", "print", "mini_print"}) and (args[0] in vars) and (args[0] not in labels) and (args[0] != "pc"):
+            first_write, last_read = vars[args[0]]
+            vars[args[0]] = [first_write, idx]
+        elif command in {"set", "arr"} and (args[0] not in labels) and (args[0] != "pc"):
+            first_write, last_read = vars.get(args[0]) or [None, None]
+            if not first_write:
+                vars[args[0]] = [idx, last_read]
+
+    # rewrite_program
+    new_mapping = _generate_reduced_variable_map(vars)
+    print(new_mapping)
+    output = ""
+    for line, command, args in get_program_lines(program):
+        if args[0] in new_mapping:
+            output += f"{command} {new_mapping[args[0]]}\n"
+        else:
+            output += f"{line}\n"
+
+    return output
+
+def _generate_reduced_variable_map(vars):
+    ordered = sorted(vars.items(), key=lambda item: item[1][0])
+    mapping = {}
+    live_variable_followup = []
+    for var_name, (first_write, last_read) in ordered:
+        for i, (new_var_name, (new_var_first_write, new_var_last_read)) in enumerate(live_variable_followup):
+            if first_write > new_var_last_read:
+                mapping[var_name] = new_var_name
+                live_variable_followup[i] = new_var_name, (first_write, last_read)
+                break
+        else:
+            new_var = vars_generator.get_next()
+            mapping[var_name] = new_var
+            live_variable_followup.append((new_var, (first_write, last_read)))
+
+    return mapping
+
+
+def strip_labels(program):
+    """
+    The function strips all the labels with a shot names.
+    """
+    labels = get_labels(program)
+    m = {label: vars_generator.get_next() for label in labels}
+    output = ""
+    for line, command, args in get_program_lines(program):
+        if args[0] in m:
+            output += f"{command} {m[args[0]]}\n"
+        else:
+            output += f"{line}\n"
+
+    return output
+
+
+def strip_predefined_variables(program):
+    v = {
+        "space": " ",
+        "minus_str": "-",
+        "plus_str": "+",
+        "assign": "=",
+        "transitions": [
+            [(1, 8)],
+            [(1, 7)],
+            [(0, 3), (1, 7)],
+            [(0, 5), (0, 2), (1, 9)],
+            [(1, 9)],
+            [(1, 9), (1, 6), (0, 3)],
+            [(0, 9), (1, 8), (2, 5)],
+            [(2, 1)],
+            [(2, 0), (2, 6), (2, 9)],
+            [(0, 6), (1, 8), (2, 3), (2, 4), (2, 5)],
+        ],
+        "pc": 0,
+    }
+    m = {k: vars_generator.get_next() for k in v}
+    output = ""
+    for line, command, args in get_program_lines(program):
+        if args[0] in m:
+            output += f"{command} {m[args[0]]}\n"
+        else:
+            output += f"{line}\n"
+
+    return output, m
+
+
+def test(program):
+    for i in range(1000):
+        interpreter = CustomLanguageInterpreter()
+        try:
+            interpreter.interpret(program)
+            #print(interpreter.variables)
+        except Exception as e:
+            print("vars:", interpreter.variables)
+            raise e
+
+
+if __name__ == "__main__":
+    program = remove_jumps(program=generate_equation_program)
+    program = remove_labels(program)
+    program = reduce_vars(program)
+    program = strip_labels(program)
+    program, predefined_variables = strip_predefined_variables(program)
+    print(program)
+    print(predefined_variables)
+    #test(program)
+
